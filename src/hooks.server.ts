@@ -6,12 +6,13 @@ import { sequence } from "@sveltejs/kit/hooks";
 const supabase: Handle = async ({ event, resolve }) => {
 	event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY, {
 		cookies: {
-			get: (name) => event.cookies.get(name),
-			set: (name, value, options) => {
-				event.cookies.set(name, value, { ...options, path: "/" });
+			getAll() {
+				return event.cookies.getAll().map(({ name, value }) => ({ name, value }));
 			},
-			remove: (name, options) => {
-				event.cookies.delete(name, { ...options, path: "/" });
+			setAll(cookies) {
+				cookies.forEach(({ name, value, options }) => {
+					event.cookies.set(name, value, { ...options, path: "/" });
+				});
 			}
 		}
 	});
