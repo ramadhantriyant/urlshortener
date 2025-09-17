@@ -29,11 +29,11 @@ const supabase: Handle = async ({ event, resolve }) => {
 		// Create a minimal session-like object that contains the authenticated user
 		const session = {
 			user,
-			access_token: '', // We don't need the token for this app
-			refresh_token: '',
+			access_token: "", // We don't need the token for this app
+			refresh_token: "",
 			expires_in: 0,
 			expires_at: 0,
-			token_type: 'bearer'
+			token_type: "bearer"
 		};
 
 		return { session, user };
