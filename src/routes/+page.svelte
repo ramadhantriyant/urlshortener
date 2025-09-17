@@ -179,23 +179,30 @@
 					<div class="space-y-4">
 						{#each data.urls as url (url.id)}
 							<div class="rounded-lg border border-gray-200 p-4">
-								<div class="flex items-center justify-between">
-									<div class="flex-1">
-										<p class="font-medium text-gray-900">
+								<div class="flex items-start justify-between gap-4">
+									<div class="flex-1 min-w-0">
+										<p class="font-medium text-gray-900 break-all">
 											{origin}/{url.short_code}
 										</p>
-										<p class="truncate text-sm text-gray-600">{url.original_url}</p>
+										<p class="text-sm text-gray-600 break-all overflow-hidden" title={url.original_url}>
+											{url.original_url}
+										</p>
 									</div>
-									<div class="text-right">
+									<div class="text-right flex-shrink-0">
 										<p class="text-sm font-medium text-gray-900">{url.clicks} clicks</p>
 										<div class="mt-1 flex items-center justify-end gap-2">
 											<button
 												onclick={() => {
 													navigator.clipboard.writeText(`${origin}/${url.short_code}`);
 												}}
-												class="text-sm text-blue-600 hover:text-blue-800"
+												class="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-blue-50"
+												title="Copy short URL"
+												aria-label="Copy short URL"
 											>
-												Copy
+												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+													<rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+													<path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+												</svg>
 											</button>
 											<form
 												method="post"
@@ -214,8 +221,14 @@
 												}}
 											>
 												<input type="hidden" name="url_id" value={url.id} />
-												<button type="submit" class="text-sm text-red-600 hover:text-red-800">
-													Delete
+												<button type="submit" class="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50" title="Delete URL" aria-label="Delete URL">
+													<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+														<path d="M3 6h18"></path>
+														<path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+														<path d="M8 6V4c0-1 1-2 2-2h4c0-1 1-2 2-2v2"></path>
+														<line x1="10" y1="11" x2="10" y2="17"></line>
+														<line x1="14" y1="11" x2="14" y2="17"></line>
+													</svg>
 												</button>
 											</form>
 										</div>

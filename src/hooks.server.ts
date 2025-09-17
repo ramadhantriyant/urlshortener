@@ -19,19 +19,22 @@ const supabase: Handle = async ({ event, resolve }) => {
 
 	event.locals.safeGetSession = async () => {
 		const {
-			data: { session }
-		} = await event.locals.supabase.auth.getSession();
-		if (!session) {
-			return { session: null, user: null };
-		}
-
-		const {
 			data: { user },
 			error
 		} = await event.locals.supabase.auth.getUser();
-		if (error) {
+		if (error || !user) {
 			return { session: null, user: null };
 		}
+
+		// Create a minimal session-like object that contains the authenticated user
+		const session = {
+			user,
+			access_token: '', // We don't need the token for this app
+			refresh_token: '',
+			expires_in: 0,
+			expires_at: 0,
+			token_type: 'bearer'
+		};
 
 		return { session, user };
 	};
