@@ -8,6 +8,7 @@
 	let { children, data } = $props();
 
 	let session = $derived(data.session);
+	let userProfile = $derived(data.userProfile);
 
 	onMount(() => {
 		const { data: authData } = supabase.auth.onAuthStateChange((event) => {
@@ -38,7 +39,9 @@
 				</div>
 				<div class="flex items-center space-x-4">
 					{#if session}
-						<span class="text-gray-700">Welcome, {session.user.email}</span>
+						<span class="text-gray-700"
+							>Welcome, {userProfile?.full_name || session.user.email}</span
+						>
 						<form action="?/logout" method="post" class="inline">
 							<button
 								type="submit"
