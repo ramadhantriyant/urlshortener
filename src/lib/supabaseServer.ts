@@ -1,5 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
-import { type RequestEvent } from "@sveltejs/kit";
+import type { RequestEvent } from "@sveltejs/kit";
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY } from "$env/static/public";
 
 export function createSupabaseClient(event: RequestEvent) {
