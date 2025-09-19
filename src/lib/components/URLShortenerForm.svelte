@@ -21,11 +21,11 @@
 	<div class="rounded-lg bg-white p-8 shadow-md">
 		<h2 class="mb-6 text-2xl font-bold text-gray-900">Shorten a URL</h2>
 
-		{#if form?.message}
+		{#if form?.message && form?.message !== "URL deleted successfully"}
 			<Alert message={form.message} type={form.success ? "success" : "error"} />
 		{/if}
 
-		{#if form?.success}
+		{#if form?.success && form?.shortCode}
 			<div class="mb-6 rounded-lg border border-green-200 bg-green-50 p-4">
 				<p class="font-medium text-green-800">URL shortened successfully!</p>
 				<div class="mt-2 flex items-center space-x-2">

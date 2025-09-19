@@ -53,15 +53,36 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const email = formData.get("email") as string;
 		const password = formData.get("password") as string;
+		const fullName = formData.get("fullName") as string;
 
-		if (!email || !password) {
-			return fail(400, { message: "Email and password are required" });
+		if (!email || !password || !fullName) {
+			return fail(400, { message: "Email, password, and full name are required" });
 		}
 
-		const { error } = await supabase.auth.signUp({ email, password });
+		const { data: authData, error: authError } = await supabase.auth.signUp({
+			email,
+			password
+		});
 
-		if (error) {
-			return fail(400, { message: error.message });
+		if (authError) {
+			return fail(400, { message: authError.message });
+		}
+
+		// Create user profile if user was created successfully
+		if (authData.user) {
+			const { error: profileError } = await supabase.from("user_profiles").insert([
+				{
+					id: authData.user.id,
+					full_name: fullName,
+					username: email
+				}
+			]);
+
+			if (profileError) {
+				console.error("Failed to create user profile:", profileError);
+				// Note: We don't fail the registration here as the user account was created successfully
+				// The profile can be created later or updated
+			}
 		}
 
 		return { success: true, message: "Check your email for confirmation link" };
@@ -71,8 +92,6 @@ export const actions: Actions = {
 		if (!session) {
 			return fail(401, { message: "You must be logged in to shorten URLs" });
 		}
-
-		console.log("Session user ID:", session.user.id);
 
 		const formData = await request.formData();
 		const originalUrl = formData.get("url") as string;
@@ -101,7 +120,6 @@ export const actions: Actions = {
 
 		// Generate short code
 		const shortCode = customCode || generateShortCode();
-		console.log("Generated short code:", shortCode, "Length:", shortCode.length);
 
 		// Check if short code already exists
 		const { data: existing, error: existingError } = await supabase
@@ -110,8 +128,8 @@ export const actions: Actions = {
 			.eq("short_code", shortCode)
 			.single();
 
-		if (existingError) {
-			console.log("Check existing error (expected for new codes):", existingError.message);
+		if (existingError && existingError.code !== 'PGRST116') {
+			return fail(500, { message: "Failed to check short code availability" });
 		}
 
 		if (existing) {
@@ -124,9 +142,8 @@ export const actions: Actions = {
 			original_url: originalUrl,
 			short_code: shortCode
 		};
-		console.log("Inserting data:", insertData);
 
-		const { data, error } = await supabase.from("urls").insert([insertData]).select().single();
+		const { error } = await supabase.from("urls").insert([insertData]).select().single();
 
 		if (error) {
 			console.error("Database error:", error);
@@ -139,7 +156,6 @@ export const actions: Actions = {
 			return fail(500, { message: `Failed to create short URL: ${error.message}` });
 		}
 
-		console.log("Successfully inserted:", data);
 		return { success: true, shortCode, originalUrl };
 	},
 

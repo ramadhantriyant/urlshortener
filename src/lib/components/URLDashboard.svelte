@@ -23,7 +23,7 @@
 	<div class="rounded-lg bg-white p-8 shadow-md">
 		<h2 class="mb-6 text-2xl font-bold text-gray-900">Your URLs</h2>
 
-		{#if form?.success && form?.message}
+		{#if form?.success && form?.message && form?.message === "URL deleted successfully"}
 			<Alert message={form.message} type="success" />
 		{/if}
 
