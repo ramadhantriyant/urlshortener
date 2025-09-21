@@ -194,6 +194,37 @@ export const actions: Actions = {
 			const fileExt = avatarFile.name.split('.').pop();
 			const fileName = `${session.user.id}.${fileExt}`;
 
+			// Delete any existing files for this user (to handle extension changes)
+			const { data: existingFiles, error: listError } = await supabase.storage
+				.from("urlshort-userprofile")
+				.list('', {
+					search: session.user.id
+				});
+
+			if (listError) {
+				console.error("Error listing files:", listError);
+			}
+
+			if (existingFiles && existingFiles.length > 0) {
+				const filesToDelete = existingFiles
+					.filter(file => file.name.startsWith(`${session.user.id}.`))
+					.map(file => file.name);
+
+				if (filesToDelete.length > 0) {
+					console.log("Deleting files:", filesToDelete);
+					const { error: deleteError } = await supabase.storage
+						.from("urlshort-userprofile")
+						.remove(filesToDelete);
+
+					if (deleteError) {
+						console.error("Error deleting files:", deleteError);
+						// Continue with upload even if delete fails
+					} else {
+						console.log("Successfully deleted files:", filesToDelete);
+					}
+				}
+			}
+
 			// Upload to Supabase storage
 			const { error: uploadError } = await supabase.storage
 				.from("urlshort-userprofile")

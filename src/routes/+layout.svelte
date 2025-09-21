@@ -5,12 +5,15 @@
 	import { onMount } from "svelte";
 	import { supabase } from "$lib/supabase";
 	import SimpleProfileModal from "$lib/components/SimpleProfileModal.svelte";
+	import ChangePasswordModal from "$lib/components/ChangePasswordModal.svelte";
 
 	let { children, data } = $props();
 
 	let session = $derived(data.session);
 	let userProfile = $derived(data.userProfile);
 	let showProfileModal = $state(false);
+	let showChangePasswordModal = $state(false);
+	let showDropdown = $state(false);
 
 	onMount(() => {
 		const { data: authData } = supabase.auth.onAuthStateChange((event) => {
@@ -24,10 +27,28 @@
 
 	function openProfileModal() {
 		showProfileModal = true;
+		showDropdown = false;
 	}
 
 	function closeProfileModal() {
 		showProfileModal = false;
+	}
+
+	function openChangePasswordModal() {
+		showChangePasswordModal = true;
+		showDropdown = false;
+	}
+
+	function closeChangePasswordModal() {
+		showChangePasswordModal = false;
+	}
+
+	function toggleDropdown() {
+		showDropdown = !showDropdown;
+	}
+
+	function closeDropdown() {
+		showDropdown = false;
 	}
 </script>
 
@@ -49,10 +70,10 @@
 				</div>
 				<div class="flex items-center space-x-4">
 					{#if session}
-						<div class="flex items-center space-x-3">
+						<div class="relative flex items-center space-x-3">
 							<!-- Profile Photo -->
 							<button
-								onclick={openProfileModal}
+								onclick={toggleDropdown}
 								class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden hover:ring-2 hover:ring-blue-500 transition-all"
 							>
 								{#if userProfile?.avatar_url}
@@ -64,13 +85,39 @@
 								{/if}
 							</button>
 
-							<!-- Username/Email -->
+							<!-- Username/Email with dropdown arrow -->
 							<button
-								onclick={openProfileModal}
-								class="text-gray-700 hover:text-blue-600 transition-colors cursor-pointer"
+								onclick={toggleDropdown}
+								class="flex items-center text-gray-700 hover:text-blue-600 transition-colors cursor-pointer"
 							>
-								Welcome, {userProfile?.full_name || session.user.email}
+								<span>Welcome, {userProfile?.full_name || session.user.email}</span>
+								<svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+								</svg>
 							</button>
+
+							<!-- Dropdown Menu -->
+							{#if showDropdown}
+								<div class="absolute right-0 top-10 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+									<button
+										onclick={openProfileModal}
+										class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+									>
+										Profile
+									</button>
+									<button
+										onclick={openChangePasswordModal}
+										class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+									>
+										Change Password
+									</button>
+								</div>
+							{/if}
+
+							<!-- Click outside to close dropdown -->
+							{#if showDropdown}
+								<button class="fixed inset-0 z-40" onclick={closeDropdown} aria-label="Close dropdown"></button>
+							{/if}
 						</div>
 
 						<form action="?/logout" method="post" class="inline">
@@ -97,6 +144,11 @@
 			isOpen={showProfileModal}
 			onClose={closeProfileModal}
 			userProfile={userProfile}
+			session={session}
+		/>
+		<ChangePasswordModal
+			isOpen={showChangePasswordModal}
+			onClose={closeChangePasswordModal}
 			session={session}
 		/>
 	{/if}

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
+	import { invalidateAll } from "$app/navigation";
 
 	interface Props {
 		isOpen: boolean;
@@ -21,8 +22,25 @@
 				previewUrl = reader.result as string;
 			};
 			reader.readAsDataURL(file);
+		} else {
+			previewUrl = "";
 		}
 	}
+
+	function clearPreview() {
+		previewUrl = "";
+		const fileInput = document.getElementById('avatar') as HTMLInputElement;
+		if (fileInput) {
+			fileInput.value = '';
+		}
+	}
+
+	// Clear preview when modal opens
+	$effect(() => {
+		if (isOpen) {
+			clearPreview();
+		}
+	});
 </script>
 
 {#if isOpen}
@@ -57,6 +75,7 @@
 						await update();
 						if (result.type === 'success') {
 							previewUrl = "";
+							await invalidateAll(); // Refresh all layout data including userProfile
 							onClose();
 						}
 					};
