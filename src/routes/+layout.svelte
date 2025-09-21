@@ -4,11 +4,13 @@
 	import { invalidate } from "$app/navigation";
 	import { onMount } from "svelte";
 	import { supabase } from "$lib/supabase";
+	import SimpleProfileModal from "$lib/components/SimpleProfileModal.svelte";
 
 	let { children, data } = $props();
 
 	let session = $derived(data.session);
 	let userProfile = $derived(data.userProfile);
+	let showProfileModal = $state(false);
 
 	onMount(() => {
 		const { data: authData } = supabase.auth.onAuthStateChange((event) => {
@@ -19,6 +21,14 @@
 
 		return () => authData.subscription.unsubscribe();
 	});
+
+	function openProfileModal() {
+		showProfileModal = true;
+	}
+
+	function closeProfileModal() {
+		showProfileModal = false;
+	}
 </script>
 
 <svelte:head>
@@ -39,9 +49,30 @@
 				</div>
 				<div class="flex items-center space-x-4">
 					{#if session}
-						<span class="text-gray-700"
-							>Welcome, {userProfile?.full_name || session.user.email}</span
-						>
+						<div class="flex items-center space-x-3">
+							<!-- Profile Photo -->
+							<button
+								onclick={openProfileModal}
+								class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden hover:ring-2 hover:ring-blue-500 transition-all"
+							>
+								{#if userProfile?.avatar_url}
+									<img src={userProfile.avatar_url} alt="Profile" class="h-full w-full object-cover" />
+								{:else}
+									<svg class="h-4 w-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+										<path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+									</svg>
+								{/if}
+							</button>
+
+							<!-- Username/Email -->
+							<button
+								onclick={openProfileModal}
+								class="text-gray-700 hover:text-blue-600 transition-colors cursor-pointer"
+							>
+								Welcome, {userProfile?.full_name || session.user.email}
+							</button>
+						</div>
+
 						<form action="?/logout" method="post" class="inline">
 							<button
 								type="submit"
@@ -59,4 +90,14 @@
 	<main>
 		{@render children?.()}
 	</main>
+
+	<!-- Profile Modal -->
+	{#if session}
+		<SimpleProfileModal
+			isOpen={showProfileModal}
+			onClose={closeProfileModal}
+			userProfile={userProfile}
+			session={session}
+		/>
+	{/if}
 </div>

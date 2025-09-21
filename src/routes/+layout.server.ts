@@ -8,7 +8,7 @@ export const load: LayoutServerLoad = async ({ locals: { safeGetSession, supabas
 	if (session?.user?.id) {
 		const { data } = await supabase
 			.from("user_profiles")
-			.select("full_name")
+			.select("full_name, avatar_url")
 			.eq("id", session.user.id)
 			.single();
 
