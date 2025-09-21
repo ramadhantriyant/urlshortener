@@ -35,13 +35,20 @@ export const load: PageServerLoad = async ({ params, locals: { supabase }, reque
 		request.headers.get("x-real-ip") ||
 		null;
 
+	// Get Cloudflare geolocation data
+	const cf = (request as any).cf;
+	const country = cf?.country || null;
+	const city = cf?.city || null;
+
 	// Insert click record
 	await supabase.from("clicks").insert([
 		{
 			url_id: typedUrlData.id,
 			user_agent: userAgent,
 			referer: referer,
-			ip_address: clientIP
+			ip_address: clientIP,
+			country: country,
+			city: city
 		}
 	]);
 

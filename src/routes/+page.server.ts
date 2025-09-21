@@ -53,36 +53,18 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const email = formData.get("email") as string;
 		const password = formData.get("password") as string;
-		const fullName = formData.get("fullName") as string;
 
-		if (!email || !password || !fullName) {
-			return fail(400, { message: "Email, password, and full name are required" });
+		if (!email || !password) {
+			return fail(400, { message: "Email and password are required" });
 		}
 
-		const { data: authData, error: authError } = await supabase.auth.signUp({
+		const { error: authError } = await supabase.auth.signUp({
 			email,
 			password
 		});
 
 		if (authError) {
 			return fail(400, { message: authError.message });
-		}
-
-		// Create user profile if user was created successfully
-		if (authData.user) {
-			const { error: profileError } = await supabase.from("user_profiles").insert([
-				{
-					id: authData.user.id,
-					full_name: fullName,
-					username: email
-				}
-			]);
-
-			if (profileError) {
-				console.error("Failed to create user profile:", profileError);
-				// Note: We don't fail the registration here as the user account was created successfully
-				// The profile can be created later or updated
-			}
 		}
 
 		return { success: true, message: "Check your email for confirmation link" };

@@ -40,18 +40,6 @@
 	{/if}
 
 	<form method="post" action="?/{showRegister ? 'register' : 'login'}" use:enhance>
-		{#if showRegister}
-			<div class="mb-4">
-				<label for="fullName" class="mb-2 block text-sm font-medium text-gray-700">Full Name</label>
-				<input
-					type="text"
-					id="fullName"
-					name="fullName"
-					required
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-				/>
-			</div>
-		{/if}
 		<div class="mb-4">
 			<label for="email" class="mb-2 block text-sm font-medium text-gray-700">Email</label>
 			<input
