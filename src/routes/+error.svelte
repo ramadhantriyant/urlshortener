@@ -1,6 +1,12 @@
 <script lang="ts">
-	import { page } from "$app/stores";
 	import { browser } from "$app/environment";
+
+	interface Props {
+		status?: number;
+		error?: App.Error;
+	}
+
+	let { status = 500, error }: Props = $props();
 
 	let origin = $state("");
 
@@ -9,8 +15,6 @@
 			origin = window.location.origin;
 		}
 	});
-
-	let status = $derived($page.status);
 
 	function getErrorTitle(status: number) {
 		switch (status) {
@@ -95,7 +99,7 @@
 			<!-- URL Info for 404 -->
 			<div class="mb-8 rounded-lg bg-gray-100 p-4">
 				<p class="text-sm text-gray-600">
-					Looking for: <span class="font-mono text-gray-800">{origin}{$page.url.pathname}</span>
+					Looking for: <span class="font-mono text-gray-800">{origin}{browser ? window.location.pathname : ''}</span>
 				</p>
 			</div>
 		{/if}
