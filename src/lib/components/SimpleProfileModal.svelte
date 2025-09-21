@@ -69,9 +69,9 @@
 						<!-- Photo Preview -->
 						<div class="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden" aria-hidden="true">
 							{#if previewUrl}
-								<img src={previewUrl} alt="Profile photo preview" class="h-full w-full object-cover" />
+								<img src={previewUrl} alt="Profile preview" class="h-full w-full object-cover" />
 							{:else if userProfile?.avatar_url}
-								<img src={userProfile.avatar_url} alt="Current profile photo" class="h-full w-full object-cover" />
+								<img src={userProfile.avatar_url} alt="Current profile" class="h-full w-full object-cover" />
 							{:else}
 								<svg class="h-8 w-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
 									<path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
