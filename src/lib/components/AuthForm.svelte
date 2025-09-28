@@ -12,93 +12,98 @@
 	let isSubmitting = $state(false);
 </script>
 
-<div class="mx-auto max-w-md rounded-lg bg-white p-8 shadow-md">
-	<div class="mb-6 flex border-b">
-		<button
-			class="flex-1 py-2 {!showRegister
-				? 'border-b-2 border-blue-500 text-blue-600'
-				: 'text-gray-500'}"
-			onclick={() => {
-				showRegister = false;
-			}}
-		>
-			Sign In
-		</button>
-		<button
-			class="flex-1 py-2 {showRegister
-				? 'border-b-2 border-blue-500 text-blue-600'
-				: 'text-gray-500'}"
-			onclick={() => {
-				showRegister = true;
-			}}
-		>
-			Register
-		</button>
-	</div>
-
-	{#if form?.message}
-		<Alert message={form.message} type={form.success ? "success" : "error"} />
-	{/if}
-
-	<form
-		method="post"
-		action="?/{showRegister ? 'register' : 'login'}"
-		use:enhance={() => {
-			isSubmitting = true;
-			return async ({ update }) => {
-				isSubmitting = false;
-				await update();
-			};
-		}}
-	>
-		<div class="mb-4">
-			<label for="email" class="mb-2 block text-sm font-medium text-gray-700">Email</label>
-			<input
-				type="email"
-				id="email"
-				name="email"
-				required
-				disabled={isSubmitting}
-				class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-			/>
-		</div>
-		<div class="mb-6">
-			<label for="password" class="mb-2 block text-sm font-medium text-gray-700">Password</label>
-			<input
-				type="password"
-				id="password"
-				name="password"
-				required
-				disabled={isSubmitting}
-				class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-			/>
-		</div>
-		<button
-			type="submit"
-			disabled={isSubmitting}
-			class="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-		>
-			{#if isSubmitting}
-				<svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24">
-					<circle
-						cx="12"
-						cy="12"
-						r="10"
-						stroke="currentColor"
-						stroke-width="4"
-						fill="none"
-						class="opacity-25"
-					></circle>
+<div class="card mx-auto w-full max-w-md bg-base-100 shadow-xl">
+	<div class="card-body">
+		<div class="tabs-boxed mb-6 tabs">
+			<button
+				class="tab {!showRegister ? 'tab-active' : ''}"
+				onclick={() => {
+					showRegister = false;
+				}}
+			>
+				<svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path
-						fill="currentColor"
-						class="opacity-75"
-						d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7c2 0 3 1 3 3v1"
 					></path>
 				</svg>
-				{showRegister ? "Creating account..." : "Signing in..."}
-			{:else}
-				{showRegister ? "Register" : "Sign In"}
-			{/if}
-		</button>
-	</form>
+				Sign In
+			</button>
+			<button
+				class="tab {showRegister ? 'tab-active' : ''}"
+				onclick={() => {
+					showRegister = true;
+				}}
+			>
+				<svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+					></path>
+				</svg>
+				Register
+			</button>
+		</div>
+
+		{#if form?.message}
+			<Alert message={form.message} type={form.success ? "success" : "error"} />
+		{/if}
+
+		<form
+			method="post"
+			action="?/{showRegister ? 'register' : 'login'}"
+			use:enhance={() => {
+				isSubmitting = true;
+				return async ({ update }) => {
+					isSubmitting = false;
+					await update();
+				};
+			}}
+		>
+			<div class="form-control w-full">
+				<label class="label" for="email">
+					<span class="label-text">Email address</span>
+				</label>
+				<input
+					type="email"
+					id="email"
+					name="email"
+					required
+					disabled={isSubmitting}
+					placeholder="Enter your email"
+					class="input-bordered input w-full"
+				/>
+			</div>
+
+			<div class="form-control w-full">
+				<label class="label" for="password">
+					<span class="label-text">Password</span>
+				</label>
+				<input
+					type="password"
+					id="password"
+					name="password"
+					required
+					disabled={isSubmitting}
+					placeholder="Enter your password"
+					class="input-bordered input w-full"
+				/>
+			</div>
+
+			<div class="form-control mt-6">
+				<button type="submit" disabled={isSubmitting} class="btn btn-primary">
+					{#if isSubmitting}
+						<span class="loading loading-sm loading-spinner"></span>
+						{showRegister ? "Creating account..." : "Signing in..."}
+					{:else}
+						{showRegister ? "Create Account" : "Sign In"}
+					{/if}
+				</button>
+			</div>
+		</form>
+	</div>
 </div>

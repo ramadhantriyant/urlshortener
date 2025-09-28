@@ -16,16 +16,32 @@
 	});
 </script>
 
-<div class="mx-auto max-w-4xl px-4 py-8">
-	<div class="mb-12 text-center">
-		<h1 class="mb-4 text-4xl font-bold text-gray-900">URL Shortener</h1>
-		<p class="text-xl text-gray-600">Shorten your long URLs with ease</p>
-	</div>
-
+<div class="mx-auto max-w-6xl">
 	{#if !data.session}
-		<AuthForm {form} />
+		<div class="hero min-h-[500px]">
+			<div class="hero-content text-center">
+				<div class="max-w-2xl">
+					<div class="mb-8">
+						<div class="mb-4 text-6xl">🔗</div>
+						<h1
+							class="bg-gradient-to-r from-primary to-secondary bg-clip-text text-5xl font-bold text-transparent"
+						>
+							URL Shortener
+						</h1>
+						<p class="py-6 text-xl text-base-content/70">
+							Transform your long URLs into short, shareable links with advanced analytics and
+							custom codes.
+						</p>
+					</div>
+
+					<AuthForm {form} />
+				</div>
+			</div>
+		</div>
 	{:else}
-		<URLShortenerForm {form} {origin} />
-		<URLDashboard urls={data.urls} {form} {origin} />
+		<div class="space-y-8">
+			<URLShortenerForm {form} {origin} />
+			<URLDashboard urls={data.urls} {form} {origin} />
+		</div>
 	{/if}
 </div>

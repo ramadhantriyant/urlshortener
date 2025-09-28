@@ -18,30 +18,60 @@
 	}
 </script>
 
-<div class="mx-auto mb-12 max-w-2xl">
-	<div class="rounded-lg bg-white p-8 shadow-md">
-		<h2 class="mb-6 text-2xl font-bold text-gray-900">Shorten a URL</h2>
+<div class="card mx-auto mb-8 w-full max-w-2xl bg-base-100 shadow-xl">
+	<div class="card-body">
+		<h2 class="card-title text-2xl font-bold">
+			<svg class="h-8 w-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+				></path>
+			</svg>
+			Shorten a URL
+		</h2>
 
 		{#if form?.message && form?.message !== "URL deleted successfully"}
 			<Alert message={form.message} type={form.success ? "success" : "error"} />
 		{/if}
 
 		{#if form?.success && form?.shortCode}
-			<div class="mb-6 rounded-lg border border-green-200 bg-green-50 p-4">
-				<p class="font-medium text-green-800">URL shortened successfully!</p>
-				<div class="mt-2 flex items-center space-x-2">
-					<input
-						type="text"
-						value="{origin}/{form.shortCode}"
-						readonly
-						class="flex-1 rounded-md border border-green-300 bg-white px-3 py-2"
+			<div class="mb-6 alert alert-success">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="h-6 w-6 shrink-0 stroke-current"
+					fill="none"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
 					/>
-					<button
-						onclick={copyShortUrl}
-						class="rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700"
-					>
-						Copy
-					</button>
+				</svg>
+				<div class="flex-1">
+					<div class="font-medium">URL shortened successfully!</div>
+					<div class="mt-2 flex items-center gap-2">
+						<input
+							type="text"
+							value="{origin}/{form.shortCode}"
+							readonly
+							class="input-bordered input input-sm flex-1"
+						/>
+						<button onclick={copyShortUrl} class="btn btn-sm btn-success">
+							<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+								></path>
+							</svg>
+							Copy
+						</button>
+					</div>
 				</div>
 			</div>
 		{/if}
@@ -57,10 +87,11 @@
 				};
 			}}
 		>
-			<div class="mb-4">
-				<label for="url" class="mb-2 block text-sm font-medium text-gray-700"
-					>Enter your long URL</label
-				>
+			<div class="form-control w-full">
+				<label class="label" for="url">
+					<span class="label-text">Enter your long URL</span>
+					<span class="label-text-alt">Required</span>
+				</label>
 				<input
 					type="url"
 					id="url"
@@ -68,13 +99,15 @@
 					required
 					disabled={isSubmitting}
 					placeholder="https://example.com/very-long-url"
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+					class="input-bordered input w-full"
 				/>
 			</div>
-			<div class="mb-6">
-				<label for="custom_code" class="mb-2 block text-sm font-medium text-gray-700"
-					>Custom short code (optional)</label
-				>
+
+			<div class="form-control w-full">
+				<label class="label" for="custom_code">
+					<span class="label-text">Custom short code</span>
+					<span class="label-text-alt">Optional</span>
+				</label>
 				<input
 					type="text"
 					id="custom_code"
@@ -82,36 +115,31 @@
 					placeholder="mycustomcode"
 					pattern="[a-zA-Z0-9]+"
 					disabled={isSubmitting}
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+					class="input-bordered input w-full"
 				/>
+				<div class="label" aria-hidden="true">
+					<span class="label-text-alt">Alphanumeric characters only</span>
+				</div>
 			</div>
-			<button
-				type="submit"
-				disabled={isSubmitting}
-				class="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-			>
-				{#if isSubmitting}
-					<svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24">
-						<circle
-							cx="12"
-							cy="12"
-							r="10"
-							stroke="currentColor"
-							stroke-width="4"
-							fill="none"
-							class="opacity-25"
-						></circle>
-						<path
-							fill="currentColor"
-							class="opacity-75"
-							d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-						></path>
-					</svg>
-					Shortening...
-				{:else}
-					Shorten URL
-				{/if}
-			</button>
+
+			<div class="form-control mt-6">
+				<button type="submit" disabled={isSubmitting} class="btn btn-lg btn-primary">
+					{#if isSubmitting}
+						<span class="loading loading-md loading-spinner"></span>
+						Shortening...
+					{:else}
+						<svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+							></path>
+						</svg>
+						Shorten URL
+					{/if}
+				</button>
+			</div>
 		</form>
 	</div>
 </div>

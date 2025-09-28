@@ -13,7 +13,6 @@
 	let userProfile = $derived(data.userProfile);
 	let showProfileModal = $state(false);
 	let showChangePasswordModal = $state(false);
-	let showDropdown = $state(false);
 
 	onMount(() => {
 		const { data: authData } = supabase.auth.onAuthStateChange((event) => {
@@ -27,7 +26,6 @@
 
 	function openProfileModal() {
 		showProfileModal = true;
-		showDropdown = false;
 	}
 
 	function closeProfileModal() {
@@ -36,19 +34,10 @@
 
 	function openChangePasswordModal() {
 		showChangePasswordModal = true;
-		showDropdown = false;
 	}
 
 	function closeChangePasswordModal() {
 		showChangePasswordModal = false;
-	}
-
-	function toggleDropdown() {
-		showDropdown = !showDropdown;
-	}
-
-	function closeDropdown() {
-		showDropdown = false;
 	}
 </script>
 
@@ -56,104 +45,76 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div class="min-h-screen bg-gray-50">
-	<nav class="border-b bg-white shadow-sm">
-		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-			<div class="flex h-16 justify-between">
-				<div class="flex items-center">
-					<button
-						onclick={() => (window.location.href = "/")}
-						class="cursor-pointer border-none bg-transparent text-xl font-bold text-gray-900"
-					>
-						URLShort
-					</button>
-				</div>
-				<div class="flex items-center space-x-4">
-					{#if session}
-						<div class="relative flex items-center space-x-3">
-							<!-- Profile Photo -->
-							<button
-								onclick={toggleDropdown}
-								class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-gray-200 transition-all hover:ring-2 hover:ring-blue-500"
-							>
-								{#if userProfile?.avatar_url}
-									<img
-										src={userProfile.avatar_url}
-										alt="Profile"
-										class="h-full w-full object-cover"
-									/>
-								{:else}
-									<svg class="h-4 w-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+<div class="min-h-screen" data-theme="light">
+	<div class="navbar bg-base-100 shadow-lg">
+		<div class="navbar-start">
+			<button
+				onclick={() => (window.location.href = "/")}
+				class="btn text-xl font-bold text-primary btn-ghost"
+			>
+				🔗 URLShort
+			</button>
+		</div>
+
+		<div class="navbar-end">
+			{#if session}
+				<div class="dropdown dropdown-end">
+					<div tabindex="0" role="button" class="btn avatar btn-circle btn-ghost">
+						<div class="w-10 rounded-full">
+							{#if userProfile?.avatar_url}
+								<img src={userProfile.avatar_url} alt="Profile" class="rounded-full" />
+							{:else}
+								<div
+									class="flex h-10 w-10 items-center justify-center rounded-full bg-neutral text-neutral-content"
+								>
+									<svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
 										<path
 											fill-rule="evenodd"
 											d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
 											clip-rule="evenodd"
 										/>
 									</svg>
-								{/if}
-							</button>
-
-							<!-- Username/Email with dropdown arrow -->
-							<button
-								onclick={toggleDropdown}
-								class="flex cursor-pointer items-center text-gray-700 transition-colors hover:text-blue-600"
-							>
-								<span>Welcome, {userProfile?.full_name || session.user.email}</span>
-								<svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M19 9l-7 7-7-7"
-									></path>
-								</svg>
-							</button>
-
-							<!-- Dropdown Menu -->
-							{#if showDropdown}
-								<div
-									class="absolute top-10 right-0 z-50 mt-2 w-48 rounded-md border border-gray-200 bg-white py-1 shadow-lg"
-								>
-									<button
-										onclick={openProfileModal}
-										class="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
-									>
-										Profile
-									</button>
-									<button
-										onclick={openChangePasswordModal}
-										class="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
-									>
-										Change Password
-									</button>
 								</div>
 							{/if}
-
-							<!-- Click outside to close dropdown -->
-							{#if showDropdown}
-								<button
-									class="fixed inset-0 z-40"
-									onclick={closeDropdown}
-									aria-label="Close dropdown"
-								></button>
-							{/if}
 						</div>
-
-						<form action="?/logout" method="post" class="inline">
-							<button
-								type="submit"
-								class="rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700"
-							>
-								Logout
+					</div>
+					<ul
+						class="dropdown-content menu z-[1] mt-3 w-52 menu-sm rounded-box bg-base-100 p-2 shadow"
+					>
+						<li class="menu-title">
+							<span>Welcome, {userProfile?.full_name || session.user.email}</span>
+						</li>
+						<li>
+							<button onclick={openProfileModal} class="justify-between">
+								Profile Settings
 							</button>
-						</form>
-					{/if}
+						</li>
+						<li>
+							<button onclick={openChangePasswordModal} class="justify-between">Change Password</button>
+						</li>
+						<div class="divider my-2"></div>
+						<li>
+							<form action="?/logout" method="post" class="p-0">
+								<button type="submit" class="btn w-full btn-sm btn-error">
+									<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+										></path>
+									</svg>
+									Logout
+								</button>
+							</form>
+						</li>
+					</ul>
 				</div>
-			</div>
+			{/if}
 		</div>
-	</nav>
+	</div>
 
-	<main>
+	<main class="container mx-auto p-4">
 		{@render children?.()}
 	</main>
 

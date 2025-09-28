@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase }, reque
 	// Get the URL from database
 	const { data: urlData, error: fetchError } = await supabase
 		.from("urls")
-		.select("id, original_url, is_active, clicks")
+		.select("id, original_url, is_active")
 		.eq("short_code", shortCode)
 		.eq("is_active", true)
 		.single();
@@ -16,7 +16,6 @@ export const load: PageServerLoad = async ({ params, locals: { supabase }, reque
 		id: string;
 		original_url: string;
 		is_active: boolean;
-		clicks: number;
 	};
 
 	if (fetchError || !urlData) {
@@ -59,11 +58,8 @@ export const load: PageServerLoad = async ({ params, locals: { supabase }, reque
 		}
 	]);
 
-	// Increment click counter using raw SQL
-	await supabase
-		.from("urls")
-		.update({ clicks: typedUrlData.clicks + 1 })
-		.eq("id", typedUrlData.id);
+	// Increment click counter atomically using SQL function
+	await supabase.rpc('increment_clicks', { url_id: typedUrlData.id });
 
 	// Redirect to original URL
 	throw redirect(302, typedUrlData.original_url);

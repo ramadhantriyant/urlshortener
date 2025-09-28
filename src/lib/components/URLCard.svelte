@@ -28,75 +28,95 @@
 	};
 </script>
 
-<div class="rounded-lg border border-gray-200 p-4">
-	<div class="flex items-start justify-between gap-4">
-		<div class="min-w-0 flex-1">
-			<p class="font-medium break-all text-gray-900">
-				<a
-					href={resolve(`/${url.short_code}`)}
-					target="_blank"
-					rel="external noopener noreferrer"
-					data-sveltekit-reload
-					class="underline-offset-2 hover:text-blue-600 hover:underline"
-				>
-					{origin}/{url.short_code}
-				</a>
-			</p>
-			<p class="overflow-hidden text-sm break-all text-gray-600" title={url.original_url}>
-				{url.original_url}
-			</p>
-		</div>
-		<div class="flex-shrink-0 text-right">
-			<p class="text-sm font-medium text-gray-900">{url.clicks} clicks</p>
-			<div class="mt-1 flex items-center justify-end gap-2">
-				<button
-					onclick={copyToClipboard}
-					class="rounded p-1 text-blue-600 hover:bg-blue-50 hover:text-blue-800"
-					title="Copy short URL"
-					aria-label="Copy short URL"
-				>
+<div class="card border border-base-300 bg-base-100 shadow-sm transition-shadow hover:shadow-md">
+	<div class="card-body p-4">
+		<div class="flex items-start justify-between gap-4">
+			<div class="min-w-0 flex-1">
+				<div class="mb-2 flex items-center gap-2">
 					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="16"
-						height="16"
-						viewBox="0 0 24 24"
+						class="h-4 w-4 flex-shrink-0 text-primary"
 						fill="none"
 						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
+						viewBox="0 0 24 24"
 					>
-						<rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
-						<path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
-					</svg>
-				</button>
-				<form method="post" action="?/deleteUrl" class="inline" use:enhance={confirmDelete}>
-					<input type="hidden" name="url_id" value={url.id} />
-					<button
-						type="submit"
-						class="rounded p-1 text-red-600 hover:bg-red-50 hover:text-red-800"
-						title="Delete URL"
-						aria-label="Delete URL"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="16"
-							height="16"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
+						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
-						>
-							<path d="M3 6h18"></path>
-							<path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-							<path d="M8 6V4c0-1 1-2 2-2h4c0-1 1-2 2-2v2"></path>
-							<line x1="10" y1="11" x2="10" y2="17"></line>
-							<line x1="14" y1="11" x2="14" y2="17"></line>
+							stroke-width="2"
+							d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+						></path>
+					</svg>
+					<a
+						href={resolve(`/${url.short_code}`)}
+						target="_blank"
+						rel="external noopener noreferrer"
+						data-sveltekit-reload
+						class="link font-semibold break-all link-primary"
+					>
+						{origin}/{url.short_code}
+					</a>
+				</div>
+				<div class="flex items-start gap-2">
+					<svg
+						class="mt-0.5 h-4 w-4 flex-shrink-0 text-base-content/60"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+						></path>
+					</svg>
+					<p class="text-sm break-all text-base-content/70" title={url.original_url}>
+						{url.original_url}
+					</p>
+				</div>
+			</div>
+			<div class="flex flex-col items-end gap-2">
+				<div class="stats">
+					<div class="stat p-2">
+						<div class="stat-value text-lg">{url.clicks}</div>
+						<div class="stat-desc">clicks</div>
+					</div>
+				</div>
+				<div class="flex items-center gap-1">
+					<button
+						onclick={copyToClipboard}
+						class="btn btn-ghost btn-sm"
+						title="Copy short URL"
+						aria-label="Copy short URL"
+					>
+						<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+							></path>
 						</svg>
 					</button>
-				</form>
+					<form method="post" action="?/deleteUrl" class="inline" use:enhance={confirmDelete}>
+						<input type="hidden" name="url_id" value={url.id} />
+						<button
+							type="submit"
+							class="btn text-error btn-ghost btn-sm hover:bg-error hover:text-error-content"
+							title="Delete URL"
+							aria-label="Delete URL"
+						>
+							<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+								></path>
+							</svg>
+						</button>
+					</form>
+				</div>
 			</div>
 		</div>
 	</div>

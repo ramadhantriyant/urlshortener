@@ -73,6 +73,37 @@ CREATE POLICY "Users can view their own profile" ON user_profiles FOR SELECT USI
 CREATE POLICY "Users can insert their own profile" ON user_profiles FOR INSERT WITH CHECK (auth.uid() = id);
 CREATE POLICY "Users can update their own profile" ON user_profiles FOR UPDATE USING (auth.uid() = id);
 
+-- Function to atomically increment click counter
+CREATE OR REPLACE FUNCTION increment_clicks(url_id UUID)
+RETURNS void AS $$
+BEGIN
+  -- Update the denormalized counter based on actual clicks table count
+  UPDATE urls
+  SET clicks = (
+    SELECT COUNT(*)
+    FROM clicks
+    WHERE clicks.url_id = increment_clicks.url_id
+  )
+  WHERE id = increment_clicks.url_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function to automatically update urls.clicks when clicks are inserted
+CREATE OR REPLACE FUNCTION update_url_clicks_count()
+RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE urls
+  SET clicks = (
+    SELECT COUNT(*)
+    FROM clicks
+    WHERE url_id = NEW.url_id
+  )
+  WHERE id = NEW.url_id;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 -- Trigger to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -87,3 +118,9 @@ CREATE TRIGGER update_urls_updated_at BEFORE UPDATE ON urls
 
 CREATE TRIGGER update_user_profiles_updated_at BEFORE UPDATE ON user_profiles
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Trigger to automatically update urls.clicks when clicks are inserted
+CREATE TRIGGER trigger_update_url_clicks
+  AFTER INSERT ON clicks
+  FOR EACH ROW
+  EXECUTE FUNCTION update_url_clicks_count();

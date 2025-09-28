@@ -49,165 +49,141 @@
 	});
 </script>
 
-{#if isOpen}
-	<div
-		class="fixed inset-0 z-50 flex items-center justify-center"
-		role="dialog"
-		aria-modal="true"
-		aria-labelledby="modal-title"
-	>
-		<button class="bg-opacity-50 fixed inset-0 bg-black" onclick={onClose} aria-label="Close modal"
-		></button>
-		<div class="z-10 mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-			<div class="mb-4 flex items-center justify-between">
-				<h2 id="modal-title" class="text-xl font-bold">Profile Settings</h2>
-				<button
-					onclick={onClose}
-					class="text-gray-500 hover:text-gray-700"
-					aria-label="Close modal"
-				>
-					<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M6 18L18 6M6 6l12 12"
-						></path>
-					</svg>
-				</button>
-			</div>
-
-			<form
-				method="post"
-				action="?/updateProfile"
-				enctype="multipart/form-data"
-				use:enhance={() => {
-					isSubmitting = true;
-					return async ({ result, update }) => {
-						isSubmitting = false;
-						await update();
-						if (result.type === "success") {
-							previewUrl = "";
-							await invalidateAll(); // Refresh all layout data including userProfile
-							onClose();
-						}
-					};
-				}}
+<div class="modal {isOpen ? 'modal-open' : ''}">
+	<div class="modal-box w-11/12 max-w-md">
+		<form method="dialog">
+			<button class="btn absolute top-2 right-2 btn-circle btn-ghost btn-sm" onclick={onClose}
+				>✕</button
 			>
-				<!-- Profile Photo Upload -->
-				<div class="mb-6">
-					<label for="avatar" class="mb-2 block text-sm font-medium text-gray-700"
-						>Profile Photo</label
-					>
-					<div class="flex items-center space-x-4">
-						<!-- Photo Preview -->
-						<div
-							class="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-gray-200"
-							aria-hidden="true"
-						>
+		</form>
+
+		<h3 class="mb-4 flex items-center gap-2 text-lg font-bold">
+			<svg class="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+				></path>
+			</svg>
+			Profile Settings
+		</h3>
+
+		<form
+			method="post"
+			action="?/updateProfile"
+			enctype="multipart/form-data"
+			use:enhance={() => {
+				isSubmitting = true;
+				return async ({ result, update }) => {
+					isSubmitting = false;
+					await update();
+					if (result.type === "success") {
+						previewUrl = "";
+						await invalidateAll();
+						onClose();
+					}
+				};
+			}}
+		>
+			<!-- Profile Photo Upload -->
+			<div class="form-control mb-4 w-full">
+				<label class="label" for="avatar">
+					<span class="label-text">Profile Photo</span>
+				</label>
+				<div class="flex items-center gap-4">
+					<!-- Photo Preview -->
+					<div class="avatar">
+						<div class="w-20 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
 							{#if previewUrl}
-								<img src={previewUrl} alt="Profile preview" class="h-full w-full object-cover" />
+								<img src={previewUrl} alt="Profile preview" />
 							{:else if userProfile?.avatar_url}
-								<img
-									src={userProfile.avatar_url}
-									alt="Current profile"
-									class="h-full w-full object-cover"
-								/>
+								<img src={userProfile.avatar_url} alt="Current profile" />
 							{:else}
-								<svg
-									class="h-8 w-8 text-gray-400"
-									fill="currentColor"
-									viewBox="0 0 20 20"
-									aria-hidden="true"
+								<div
+									class="flex h-20 w-20 items-center justify-center rounded-full bg-neutral text-neutral-content"
 								>
-									<path
-										fill-rule="evenodd"
-										d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-										clip-rule="evenodd"
-									/>
-								</svg>
+									<svg class="h-8 w-8" fill="currentColor" viewBox="0 0 20 20">
+										<path
+											fill-rule="evenodd"
+											d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+											clip-rule="evenodd"
+										/>
+									</svg>
+								</div>
 							{/if}
 						</div>
+					</div>
 
-						<!-- File Input -->
-						<div class="flex-1">
-							<input
-								type="file"
-								id="avatar"
-								name="avatar"
-								accept="image/*"
-								disabled={isSubmitting}
-								onchange={handleFileChange}
-								aria-describedby="avatar-help"
-								class="block w-full text-sm text-gray-500 file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50"
-							/>
-							<p id="avatar-help" class="mt-1 text-xs text-gray-500">PNG, JPG up to 5MB</p>
+					<!-- File Input -->
+					<div class="flex-1">
+						<input
+							type="file"
+							id="avatar"
+							name="avatar"
+							accept="image/*"
+							disabled={isSubmitting}
+							onchange={handleFileChange}
+							class="file-input-bordered file-input w-full file-input-primary"
+						/>
+						<div class="label">
+							<span class="label-text-alt">PNG, JPG up to 5MB</span>
 						</div>
 					</div>
 				</div>
+			</div>
 
-				<div class="mb-4">
-					<label for="fullName" class="mb-2 block text-sm font-medium text-gray-700"
-						>Full Name</label
-					>
-					<input
-						type="text"
-						id="fullName"
-						name="fullName"
-						value={userProfile?.full_name || ""}
-						disabled={isSubmitting}
-						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-					/>
-				</div>
+			<div class="form-control mb-4 w-full">
+				<label class="label" for="fullName">
+					<span class="label-text">Full Name</span>
+				</label>
+				<input
+					type="text"
+					id="fullName"
+					name="fullName"
+					value={userProfile?.full_name || ""}
+					disabled={isSubmitting}
+					placeholder="Enter your full name"
+					class="input-bordered input w-full"
+				/>
+			</div>
 
-				<div class="mb-4">
-					<label for="email" class="mb-2 block text-sm font-medium text-gray-700">Email</label>
-					<input
-						type="email"
-						value={session?.user?.email || ""}
-						readonly
-						class="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-500"
-					/>
-				</div>
+			<div class="form-control mb-6 w-full">
+				<label class="label" for="profileEmail">
+					<span class="label-text">Email</span>
+				</label>
+				<input
+					type="email"
+					id="profileEmail"
+					value={session?.user?.email || ""}
+					readonly
+					class="input-bordered input w-full bg-base-200"
+				/>
+			</div>
 
-				<div class="flex justify-end space-x-3">
-					<button
-						type="button"
-						onclick={onClose}
-						disabled={isSubmitting}
-						class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-					>
-						Cancel
-					</button>
-					<button
-						type="submit"
-						disabled={isSubmitting}
-						class="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-					>
-						{#if isSubmitting}
-							<svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24">
-								<circle
-									cx="12"
-									cy="12"
-									r="10"
-									stroke="currentColor"
-									stroke-width="4"
-									fill="none"
-									class="opacity-25"
-								></circle>
-								<path
-									fill="currentColor"
-									class="opacity-75"
-									d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-								></path>
-							</svg>
-							Saving...
-						{:else}
-							Save
-						{/if}
-					</button>
-				</div>
-			</form>
-		</div>
+			<div class="modal-action">
+				<button type="button" onclick={onClose} disabled={isSubmitting} class="btn btn-ghost">
+					Cancel
+				</button>
+				<button type="submit" disabled={isSubmitting} class="btn btn-primary">
+					{#if isSubmitting}
+						<span class="loading loading-sm loading-spinner"></span>
+						Saving...
+					{:else}
+						<svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M5 13l4 4L19 7"
+							></path>
+						</svg>
+						Save Changes
+					{/if}
+				</button>
+			</div>
+		</form>
 	</div>
-{/if}
+	<button type="button" class="modal-backdrop" aria-label="Close profile modal" onclick={onClose}
+	></button>
+</div>
