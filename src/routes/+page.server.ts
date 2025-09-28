@@ -110,7 +110,7 @@ export const actions: Actions = {
 			.eq("short_code", shortCode)
 			.single();
 
-		if (existingError && existingError.code !== 'PGRST116') {
+		if (existingError && existingError.code !== "PGRST116") {
 			return fail(500, { message: "Failed to check short code availability" });
 		}
 
@@ -191,13 +191,13 @@ export const actions: Actions = {
 				return fail(400, { message: "File must be an image" });
 			}
 
-			const fileExt = avatarFile.name.split('.').pop();
+			const fileExt = avatarFile.name.split(".").pop();
 			const fileName = `${session.user.id}.${fileExt}`;
 
 			// Delete any existing files for this user (to handle extension changes)
 			const { data: existingFiles, error: listError } = await supabase.storage
 				.from("urlshort-userprofile")
-				.list('', {
+				.list("", {
 					search: session.user.id
 				});
 
@@ -207,8 +207,8 @@ export const actions: Actions = {
 
 			if (existingFiles && existingFiles.length > 0) {
 				const filesToDelete = existingFiles
-					.filter(file => file.name.startsWith(`${session.user.id}.`))
-					.map(file => file.name);
+					.filter((file) => file.name.startsWith(`${session.user.id}.`))
+					.map((file) => file.name);
 
 				if (filesToDelete.length > 0) {
 					console.log("Deleting files:", filesToDelete);
@@ -246,13 +246,17 @@ export const actions: Actions = {
 		}
 
 		// Upsert user profile
-		const updateData: any = { id: session.user.id };
+		type UserProfileUpdate = {
+			id: string;
+			full_name?: string;
+			avatar_url?: string;
+		};
+
+		const updateData: UserProfileUpdate = { id: session.user.id };
 		if (fullName) updateData.full_name = fullName;
 		if (avatarUrl) updateData.avatar_url = avatarUrl;
 
-		const { error } = await supabase
-			.from("user_profiles")
-			.upsert(updateData);
+		const { error } = await supabase.from("user_profiles").upsert(updateData);
 
 		if (error) {
 			console.error("Profile update error:", error);

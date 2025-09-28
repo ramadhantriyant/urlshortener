@@ -36,9 +36,16 @@ export const load: PageServerLoad = async ({ params, locals: { supabase }, reque
 		null;
 
 	// Get Cloudflare geolocation data
-	const cf = (request as any).cf;
-	const country = cf?.country || null;
-	const city = cf?.city || null;
+	type CloudflareRequest = Request & {
+		cf?: {
+			country?: string;
+			city?: string;
+		};
+	};
+
+	const cfRequest = request as CloudflareRequest;
+	const country = cfRequest.cf?.country ?? null;
+	const city = cfRequest.cf?.city ?? null;
 
 	// Insert click record
 	await supabase.from("clicks").insert([

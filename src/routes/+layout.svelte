@@ -74,13 +74,21 @@
 							<!-- Profile Photo -->
 							<button
 								onclick={toggleDropdown}
-								class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden hover:ring-2 hover:ring-blue-500 transition-all"
+								class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-gray-200 transition-all hover:ring-2 hover:ring-blue-500"
 							>
 								{#if userProfile?.avatar_url}
-									<img src={userProfile.avatar_url} alt="Profile" class="h-full w-full object-cover" />
+									<img
+										src={userProfile.avatar_url}
+										alt="Profile"
+										class="h-full w-full object-cover"
+									/>
 								{:else}
 									<svg class="h-4 w-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-										<path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+										<path
+											fill-rule="evenodd"
+											d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+											clip-rule="evenodd"
+										/>
 									</svg>
 								{/if}
 							</button>
@@ -88,26 +96,33 @@
 							<!-- Username/Email with dropdown arrow -->
 							<button
 								onclick={toggleDropdown}
-								class="flex items-center text-gray-700 hover:text-blue-600 transition-colors cursor-pointer"
+								class="flex cursor-pointer items-center text-gray-700 transition-colors hover:text-blue-600"
 							>
 								<span>Welcome, {userProfile?.full_name || session.user.email}</span>
 								<svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M19 9l-7 7-7-7"
+									></path>
 								</svg>
 							</button>
 
 							<!-- Dropdown Menu -->
 							{#if showDropdown}
-								<div class="absolute right-0 top-10 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+								<div
+									class="absolute top-10 right-0 z-50 mt-2 w-48 rounded-md border border-gray-200 bg-white py-1 shadow-lg"
+								>
 									<button
 										onclick={openProfileModal}
-										class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+										class="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
 									>
 										Profile
 									</button>
 									<button
 										onclick={openChangePasswordModal}
-										class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+										class="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
 									>
 										Change Password
 									</button>
@@ -116,7 +131,11 @@
 
 							<!-- Click outside to close dropdown -->
 							{#if showDropdown}
-								<button class="fixed inset-0 z-40" onclick={closeDropdown} aria-label="Close dropdown"></button>
+								<button
+									class="fixed inset-0 z-40"
+									onclick={closeDropdown}
+									aria-label="Close dropdown"
+								></button>
 							{/if}
 						</div>
 
@@ -143,13 +162,13 @@
 		<SimpleProfileModal
 			isOpen={showProfileModal}
 			onClose={closeProfileModal}
-			userProfile={userProfile}
-			session={session}
+			{userProfile}
+			{session}
 		/>
 		<ChangePasswordModal
 			isOpen={showChangePasswordModal}
 			onClose={closeChangePasswordModal}
-			session={session}
+			{session}
 		/>
 	{/if}
 </div>

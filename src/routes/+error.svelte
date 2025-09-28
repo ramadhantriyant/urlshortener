@@ -1,14 +1,18 @@
 <script lang="ts">
 	import { browser } from "$app/environment";
 
-	interface Props {
+	type ErrorProps = {
 		status?: number;
-		error?: App.Error;
-	}
+		error: App.Error;
+	};
 
-	let { status = 500, error }: Props = $props();
-
+	const props = $props();
+	const { status: statusProp, error } = props as ErrorProps;
+	const status = statusProp ?? 500;
 	let origin = $state("");
+	const errorMessage = $derived(
+		typeof error?.message === "string" ? (error.message as string) : ""
+	);
 
 	$effect(() => {
 		if (browser) {
@@ -91,15 +95,22 @@
 		</div>
 
 		<!-- Error Description -->
-		<p class="mb-8 text-lg leading-relaxed text-gray-600">
+		<p class="mb-4 text-lg leading-relaxed text-gray-600">
 			{getErrorDescription(status)}
 		</p>
+		{#if status !== 404 && errorMessage}
+			<p class="mb-8 text-sm text-gray-500">Details: {errorMessage}</p>
+		{:else}
+			<div class="mb-8"></div>
+		{/if}
 
 		{#if status === 404}
 			<!-- URL Info for 404 -->
 			<div class="mb-8 rounded-lg bg-gray-100 p-4">
 				<p class="text-sm text-gray-600">
-					Looking for: <span class="font-mono text-gray-800">{origin}{browser ? window.location.pathname : ''}</span>
+					Looking for: <span class="font-mono text-gray-800"
+						>{origin}{browser ? window.location.pathname : ""}</span
+					>
 				</p>
 			</div>
 		{/if}

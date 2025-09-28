@@ -45,7 +45,7 @@
 		action="?/{showRegister ? 'register' : 'login'}"
 		use:enhance={() => {
 			isSubmitting = true;
-			return async ({ result, update }) => {
+			return async ({ update }) => {
 				isSubmitting = false;
 				await update();
 			};
@@ -59,7 +59,7 @@
 				name="email"
 				required
 				disabled={isSubmitting}
-				class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+				class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
 			/>
 		</div>
 		<div class="mb-6">
@@ -70,18 +70,30 @@
 				name="password"
 				required
 				disabled={isSubmitting}
-				class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+				class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
 			/>
 		</div>
 		<button
 			type="submit"
 			disabled={isSubmitting}
-			class="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+			class="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
 		>
 			{#if isSubmitting}
 				<svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24">
-					<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" class="opacity-25"></circle>
-					<path fill="currentColor" class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+					<circle
+						cx="12"
+						cy="12"
+						r="10"
+						stroke="currentColor"
+						stroke-width="4"
+						fill="none"
+						class="opacity-25"
+					></circle>
+					<path
+						fill="currentColor"
+						class="opacity-75"
+						d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+					></path>
 				</svg>
 				{showRegister ? "Creating account..." : "Signing in..."}
 			{:else}

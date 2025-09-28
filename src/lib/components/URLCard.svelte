@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
+	import { resolve } from "$app/paths";
+	import type { SubmitFunction } from "@sveltejs/kit";
 
 	interface URL {
 		id: string;
@@ -19,20 +21,26 @@
 		navigator.clipboard.writeText(`${origin}/${url.short_code}`);
 	}
 
-	function confirmDelete(event: SubmitEvent) {
+	const confirmDelete: SubmitFunction = ({ cancel }) => {
 		if (!confirm("Are you sure you want to delete this URL? This action cannot be undone.")) {
-			event.preventDefault();
-			return false;
+			cancel();
 		}
-		return true;
-	}
+	};
 </script>
 
 <div class="rounded-lg border border-gray-200 p-4">
 	<div class="flex items-start justify-between gap-4">
 		<div class="min-w-0 flex-1">
 			<p class="font-medium break-all text-gray-900">
-				{origin}/{url.short_code}
+				<a
+					href={resolve(`/${url.short_code}`)}
+					target="_blank"
+					rel="external noopener noreferrer"
+					data-sveltekit-reload
+					class="underline-offset-2 hover:text-blue-600 hover:underline"
+				>
+					{origin}/{url.short_code}
+				</a>
 			</p>
 			<p class="overflow-hidden text-sm break-all text-gray-600" title={url.original_url}>
 				{url.original_url}
@@ -62,13 +70,7 @@
 						<path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
 					</svg>
 				</button>
-				<form
-					method="post"
-					action="?/deleteUrl"
-					class="inline"
-					use:enhance
-					onsubmit={confirmDelete}
-				>
+				<form method="post" action="?/deleteUrl" class="inline" use:enhance={confirmDelete}>
 					<input type="hidden" name="url_id" value={url.id} />
 					<button
 						type="submit"
