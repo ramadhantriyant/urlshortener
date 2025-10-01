@@ -93,16 +93,16 @@
 							<span>Welcome, {userProfile?.full_name || session.user.email}</span>
 						</li>
 						<li>
-							<button onclick={openProfileModal} class="justify-between">
-								Profile Settings
-							</button>
+							<button onclick={openProfileModal} class="justify-between"> Profile Settings </button>
 						</li>
 						<li>
-							<button onclick={openChangePasswordModal} class="justify-between">Change Password</button>
+							<button onclick={openChangePasswordModal} class="justify-between"
+								>Change Password</button
+							>
 						</li>
 						<div class="divider my-2"></div>
 						<li>
-							<button onclick={handleLogout} class="btn w-full btn-sm btn-error shadow-none">
+							<button onclick={handleLogout} class="btn w-full shadow-none btn-sm btn-error">
 								<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path
 										stroke-linecap="round"

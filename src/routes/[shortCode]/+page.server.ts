@@ -59,7 +59,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase }, reque
 	]);
 
 	// Increment click counter atomically using SQL function
-	await supabase.rpc('increment_clicks', { url_id: typedUrlData.id });
+	await supabase.rpc("increment_clicks", { url_id: typedUrlData.id });
 
 	// Redirect to original URL
 	throw redirect(302, typedUrlData.original_url);
