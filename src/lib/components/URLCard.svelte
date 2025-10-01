@@ -2,12 +2,24 @@
 	import { enhance } from "$app/forms";
 	import { resolve } from "$app/paths";
 	import type { SubmitFunction } from "@sveltejs/kit";
+	import ClickAnalyticsModal from "./ClickAnalyticsModal.svelte";
+
+	interface ClickData {
+		id: string;
+		user_agent: string | null;
+		referer: string | null;
+		ip_address: string | null;
+		country: string | null;
+		city: string | null;
+		clicked_at: string;
+	}
 
 	interface URL {
 		id: string;
 		short_code: string;
 		original_url: string;
 		clicks: number;
+		click_data: ClickData[];
 	}
 
 	interface Props {
@@ -16,6 +28,7 @@
 	}
 
 	let { url, origin }: Props = $props();
+	let showAnalytics = $state(false);
 
 	function copyToClipboard() {
 		navigator.clipboard.writeText(`${origin}/${url.short_code}`);
@@ -98,6 +111,21 @@
 							></path>
 						</svg>
 					</button>
+					<button
+						onclick={() => (showAnalytics = true)}
+						class="btn btn-ghost btn-sm"
+						title="View analytics"
+						aria-label="View analytics"
+					>
+						<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+							></path>
+						</svg>
+					</button>
 					<form method="post" action="?/deleteUrl" class="inline" use:enhance={confirmDelete}>
 						<input type="hidden" name="url_id" value={url.id} />
 						<button
@@ -121,3 +149,10 @@
 		</div>
 	</div>
 </div>
+
+<ClickAnalyticsModal
+	isOpen={showAnalytics}
+	onClose={() => (showAnalytics = false)}
+	shortCode={url.short_code}
+	clicks={url.click_data}
+/>

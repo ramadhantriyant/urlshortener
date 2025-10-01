@@ -4,22 +4,44 @@ import type { Actions, PageServerLoad } from "./$types";
 export const load: PageServerLoad = async ({ locals: { safeGetSession, supabase } }) => {
 	const { session } = await safeGetSession();
 
-	let urls: Array<{
+	type ClickData = {
+		id: string;
+		user_agent: string | null;
+		referer: string | null;
+		ip_address: string | null;
+		country: string | null;
+		city: string | null;
+		clicked_at: string;
+	};
+
+	type URLWithClicks = {
 		id: string;
 		original_url: string;
 		short_code: string;
 		clicks: number;
 		created_at: string;
-	}> = [];
+		click_data: ClickData[];
+	};
+
+	let urls: URLWithClicks[] = [];
 	if (session) {
 		const { data } = await supabase
 			.from("urls")
-			.select("id, original_url, short_code, clicks, created_at")
+			.select(
+				`
+				id,
+				original_url,
+				short_code,
+				clicks,
+				created_at,
+				click_data:clicks(id, user_agent, referer, ip_address, country, city, clicked_at)
+			`
+			)
 			.eq("user_id", session.user.id)
 			.eq("is_active", true)
 			.order("created_at", { ascending: false });
 
-		urls = data || [];
+		urls = (data || []) as URLWithClicks[];
 	}
 
 	return { session, urls };

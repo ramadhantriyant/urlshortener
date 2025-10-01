@@ -39,6 +39,14 @@
 	function closeChangePasswordModal() {
 		showChangePasswordModal = false;
 	}
+
+	async function handleLogout() {
+		const form = document.createElement("form");
+		form.method = "POST";
+		form.action = "?/logout";
+		document.body.appendChild(form);
+		form.submit();
+	}
 </script>
 
 <svelte:head>
@@ -94,19 +102,17 @@
 						</li>
 						<div class="divider my-2"></div>
 						<li>
-							<form action="?/logout" method="post" class="p-0">
-								<button type="submit" class="btn w-full btn-sm btn-error">
-									<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2"
-											d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-										></path>
-									</svg>
-									Logout
-								</button>
-							</form>
+							<button onclick={handleLogout} class="btn w-full btn-sm btn-error shadow-none">
+								<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+									></path>
+								</svg>
+								Logout
+							</button>
 						</li>
 					</ul>
 				</div>
