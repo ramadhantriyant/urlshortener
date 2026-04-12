@@ -2,3 +2,8 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 @plugin "daisyui";
+
+[data-theme="light"] {
+	--color-primary: oklch(0.8405 0.132 158.94);
+	--color-primary-content: oklch(0.2 0.06 158.94);
+}
