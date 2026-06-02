@@ -41,33 +41,38 @@
 		}
 	}
 
-	// Clear preview when modal opens
 	$effect(() => {
 		if (isOpen) {
 			clearPreview();
 		}
 	});
+
+	let avatarSrc = $derived(previewUrl || userProfile?.avatar_url || "");
+	let initial = $derived((userProfile?.full_name || session?.user?.email || "U")[0].toUpperCase());
 </script>
 
 <div class="modal {isOpen ? 'modal-open' : ''}">
-	<div class="modal-box w-11/12 max-w-md">
-		<form method="dialog">
-			<button class="btn absolute top-2 right-2 btn-circle btn-ghost btn-sm" onclick={onClose}
-				>✕</button
+	<div
+		class="modal-box w-11/12 max-w-md overflow-hidden rounded-2xl border border-base-300 bg-base-200 p-0 shadow-2xl"
+	>
+		<!-- Header -->
+		<div class="flex items-center justify-between border-b border-base-300 px-6 py-4">
+			<h3 class="font-display text-base font-semibold text-base-content">Profile Settings</h3>
+			<button
+				onclick={onClose}
+				aria-label="Close"
+				class="flex h-8 w-8 items-center justify-center rounded-lg text-base-content/40 transition-colors hover:bg-base-300 hover:text-base-content"
 			>
-		</form>
-
-		<h3 class="mb-4 flex items-center gap-2 text-lg font-bold">
-			<svg class="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-				></path>
-			</svg>
-			Profile Settings
-		</h3>
+				<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M6 18L18 6M6 6l12 12"
+					/>
+				</svg>
+			</button>
+		</div>
 
 		<form
 			method="post"
@@ -85,57 +90,40 @@
 					}
 				};
 			}}
+			class="p-6"
 		>
-			<!-- Profile Photo Upload -->
-			<div class="form-control mb-4 w-full">
-				<label class="label" for="avatar">
-					<span class="label-text">Profile Photo</span>
-				</label>
-				<div class="flex items-center gap-4">
-					<!-- Photo Preview -->
-					<div class="avatar">
-						<div class="w-20 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
-							{#if previewUrl}
-								<img src={previewUrl} alt="Profile preview" />
-							{:else if userProfile?.avatar_url}
-								<img src={userProfile.avatar_url} alt="Current profile" />
-							{:else}
-								<div
-									class="flex h-20 w-20 items-center justify-center rounded-full bg-neutral text-neutral-content"
-								>
-									<svg class="h-8 w-8" fill="currentColor" viewBox="0 0 20 20">
-										<path
-											fill-rule="evenodd"
-											d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-											clip-rule="evenodd"
-										/>
-									</svg>
-								</div>
-							{/if}
-						</div>
-					</div>
-
-					<!-- File Input -->
-					<div class="flex-1">
-						<input
-							type="file"
-							id="avatar"
-							name="avatar"
-							accept="image/*"
-							disabled={isSubmitting}
-							onchange={handleFileChange}
-							class="file-input-bordered file-input w-full file-input-primary"
-						/>
-						<div class="label">
-							<span class="label-text-alt">PNG, JPG up to 5MB</span>
-						</div>
-					</div>
+			<!-- Avatar section -->
+			<div class="mb-5 flex items-center gap-4">
+				<div
+					class="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-primary/20 bg-neutral"
+				>
+					{#if avatarSrc}
+						<img src={avatarSrc} alt="Profile" class="h-16 w-16 rounded-full object-cover" />
+					{:else}
+						<span class="font-display text-xl font-bold text-primary">{initial}</span>
+					{/if}
+				</div>
+				<div class="flex-1">
+					<label class="mb-1 block text-sm font-medium text-base-content/70" for="avatar">
+						Profile photo
+					</label>
+					<input
+						type="file"
+						id="avatar"
+						name="avatar"
+						accept="image/*"
+						disabled={isSubmitting}
+						onchange={handleFileChange}
+						class="w-full rounded-lg border border-base-300 bg-base-100 text-sm text-base-content/70 file:mr-3 file:rounded-md file:border-0 file:bg-primary/10 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-primary hover:file:bg-primary/20 disabled:opacity-50"
+					/>
+					<p class="mt-1 text-xs text-base-content/30">PNG or JPG, max 5MB</p>
 				</div>
 			</div>
 
-			<div class="form-control mb-4 w-full">
-				<label class="label" for="fullName">
-					<span class="label-text">Full Name</span>
+			<!-- Name field -->
+			<div class="mb-4">
+				<label class="mb-1.5 block text-sm font-medium text-base-content/70" for="fullName">
+					Full name
 				</label>
 				<input
 					type="text"
@@ -143,41 +131,44 @@
 					name="fullName"
 					value={userProfile?.full_name || ""}
 					disabled={isSubmitting}
-					placeholder="Enter your full name"
-					class="input-bordered input w-full"
+					placeholder="Your name"
+					class="w-full rounded-lg border border-base-300 bg-base-100 px-3.5 py-2.5 text-sm text-base-content placeholder:text-base-content/30 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 focus:outline-none disabled:opacity-50"
 				/>
 			</div>
 
-			<div class="form-control mb-6 w-full">
-				<label class="label" for="profileEmail">
-					<span class="label-text">Email</span>
+			<!-- Email (readonly) -->
+			<div class="mb-6">
+				<label class="mb-1.5 block text-sm font-medium text-base-content/70" for="profileEmail">
+					Email
 				</label>
 				<input
 					type="email"
 					id="profileEmail"
 					value={session?.user?.email || ""}
 					readonly
-					class="input-bordered input w-full bg-base-200"
+					class="w-full rounded-lg border border-base-300 bg-base-300/50 px-3.5 py-2.5 text-sm text-base-content/50 focus:outline-none"
 				/>
 			</div>
 
-			<div class="modal-action">
-				<button type="button" onclick={onClose} disabled={isSubmitting} class="btn btn-ghost">
+			<!-- Actions -->
+			<div class="flex items-center justify-end gap-2">
+				<button
+					type="button"
+					onclick={onClose}
+					disabled={isSubmitting}
+					class="rounded-lg px-4 py-2 text-sm font-medium text-base-content/60 transition-colors hover:bg-base-300 hover:text-base-content disabled:opacity-50"
+				>
 					Cancel
 				</button>
-				<button type="submit" disabled={isSubmitting} class="btn btn-primary">
+				<button
+					type="submit"
+					disabled={isSubmitting}
+					class="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-content transition-opacity hover:opacity-90 disabled:opacity-50"
+				>
 					{#if isSubmitting}
-						<span class="loading loading-sm loading-spinner"></span>
-						Saving...
+						<span class="loading loading-xs loading-spinner"></span>
+						Saving…
 					{:else}
-						<svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M5 13l4 4L19 7"
-							></path>
-						</svg>
 						Save Changes
 					{/if}
 				</button>

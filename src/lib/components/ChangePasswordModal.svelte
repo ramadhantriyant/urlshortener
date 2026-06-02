@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
-
 	import type { Session } from "@supabase/supabase-js";
 
 	interface Props {
@@ -34,24 +33,27 @@
 </script>
 
 <div class="modal {isOpen ? 'modal-open' : ''}">
-	<div class="modal-box w-11/12 max-w-md">
-		<form method="dialog">
-			<button class="btn absolute top-2 right-2 btn-circle btn-ghost btn-sm" onclick={handleClose}
-				>✕</button
+	<div
+		class="modal-box w-11/12 max-w-md overflow-hidden rounded-2xl border border-base-300 bg-base-200 p-0 shadow-2xl"
+	>
+		<!-- Header -->
+		<div class="flex items-center justify-between border-b border-base-300 px-6 py-4">
+			<h3 class="font-display text-base font-semibold text-base-content">Change Password</h3>
+			<button
+				onclick={handleClose}
+				aria-label="Close"
+				class="flex h-8 w-8 items-center justify-center rounded-lg text-base-content/40 transition-colors hover:bg-base-300 hover:text-base-content"
 			>
-		</form>
-
-		<h3 class="mb-4 flex items-center gap-2 text-lg font-bold">
-			<svg class="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-				></path>
-			</svg>
-			Change Password
-		</h3>
+				<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M6 18L18 6M6 6l12 12"
+					/>
+				</svg>
+			</button>
+		</div>
 
 		<form
 			id="changePasswordForm"
@@ -72,92 +74,102 @@
 					}
 				};
 			}}
+			class="p-6"
 		>
-			<div class="form-control mb-4 w-full">
-				<label class="label" for="currentPassword">
-					<span class="label-text">Current Password</span>
-				</label>
-				<input
-					type="password"
-					id="currentPassword"
-					name="currentPassword"
-					required
-					disabled={isSubmitting}
-					placeholder="Enter current password"
-					class="input-bordered input w-full"
-				/>
-			</div>
-
-			<div class="form-control mb-4 w-full">
-				<label class="label" for="newPassword">
-					<span class="label-text">New Password</span>
-				</label>
-				<input
-					type="password"
-					id="newPassword"
-					name="newPassword"
-					required
-					disabled={isSubmitting}
-					placeholder="Enter new password (min 6 characters)"
-					class="input-bordered input w-full"
-				/>
-				<div class="label" aria-hidden="true">
-					<span class="label-text-alt">Minimum 6 characters</span>
-				</div>
-			</div>
-
-			<div class="form-control mb-4 w-full">
-				<label class="label" for="confirmPassword">
-					<span class="label-text">Confirm New Password</span>
-				</label>
-				<input
-					type="password"
-					id="confirmPassword"
-					name="confirmPassword"
-					required
-					disabled={isSubmitting}
-					placeholder="Confirm new password"
-					class="input-bordered input w-full"
-				/>
-			</div>
-
-			{#if passwordError}
-				<div class="mb-4 alert alert-error">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-6 w-6 shrink-0 stroke-current"
-						fill="none"
-						viewBox="0 0 24 24"
+			<div class="space-y-4">
+				<div>
+					<label
+						class="mb-1.5 block text-sm font-medium text-base-content/70"
+						for="currentPassword"
 					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-						/>
-					</svg>
-					<span>{passwordError}</span>
+						Current password
+					</label>
+					<input
+						type="password"
+						id="currentPassword"
+						name="currentPassword"
+						required
+						disabled={isSubmitting}
+						placeholder="Enter current password"
+						class="w-full rounded-lg border border-base-300 bg-base-100 px-3.5 py-2.5 text-sm text-base-content placeholder:text-base-content/30 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 focus:outline-none disabled:opacity-50"
+					/>
 				</div>
-			{/if}
 
-			<div class="modal-action">
-				<button type="button" onclick={handleClose} disabled={isSubmitting} class="btn btn-ghost">
-					Cancel
-				</button>
-				<button type="submit" disabled={isSubmitting} class="btn btn-primary">
-					{#if isSubmitting}
-						<span class="loading loading-sm loading-spinner"></span>
-						Changing...
-					{:else}
-						<svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<div>
+					<label class="mb-1.5 block text-sm font-medium text-base-content/70" for="newPassword">
+						New password
+					</label>
+					<input
+						type="password"
+						id="newPassword"
+						name="newPassword"
+						required
+						disabled={isSubmitting}
+						placeholder="Min. 6 characters"
+						class="w-full rounded-lg border border-base-300 bg-base-100 px-3.5 py-2.5 text-sm text-base-content placeholder:text-base-content/30 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 focus:outline-none disabled:opacity-50"
+					/>
+				</div>
+
+				<div>
+					<label
+						class="mb-1.5 block text-sm font-medium text-base-content/70"
+						for="confirmPassword"
+					>
+						Confirm new password
+					</label>
+					<input
+						type="password"
+						id="confirmPassword"
+						name="confirmPassword"
+						required
+						disabled={isSubmitting}
+						placeholder="Repeat new password"
+						class="w-full rounded-lg border border-base-300 bg-base-100 px-3.5 py-2.5 text-sm text-base-content placeholder:text-base-content/30 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 focus:outline-none disabled:opacity-50"
+					/>
+				</div>
+
+				{#if passwordError}
+					<div
+						class="flex items-start gap-2 rounded-lg border border-error/20 bg-error/10 px-4 py-3 text-sm text-error"
+					>
+						<svg
+							class="mt-0.5 h-4 w-4 flex-shrink-0"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
 							<path
 								stroke-linecap="round"
 								stroke-linejoin="round"
 								stroke-width="2"
-								d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-							></path>
+								d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+							/>
 						</svg>
-						Change Password
+						{passwordError}
+					</div>
+				{/if}
+			</div>
+
+			<!-- Actions -->
+			<div class="mt-6 flex items-center justify-end gap-2">
+				<button
+					type="button"
+					onclick={handleClose}
+					disabled={isSubmitting}
+					class="rounded-lg px-4 py-2 text-sm font-medium text-base-content/60 transition-colors hover:bg-base-300 hover:text-base-content disabled:opacity-50"
+				>
+					Cancel
+				</button>
+				<button
+					type="submit"
+					disabled={isSubmitting}
+					class="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-content transition-opacity hover:opacity-90 disabled:opacity-50"
+				>
+					{#if isSubmitting}
+						<span class="loading loading-xs loading-spinner"></span>
+						Updating…
+					{:else}
+						Update Password
 					{/if}
 				</button>
 			</div>
